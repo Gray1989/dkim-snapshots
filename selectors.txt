@@ -1,0 +1,5 @@
+ridethewind-ca.20230601.gappssmtp.com:20230601
+notification.intuit.com:s1
+sendgrid.info:smtpapi
+ridethewindebikes.ca:google
+mail.method.me:s1
