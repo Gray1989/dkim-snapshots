@@ -2,8 +2,6 @@ name: DKIM Snapshots
 
 on:
   workflow_dispatch:
- # schedule:
- #   - cron: '0 */6 * * *'
 
 jobs:
   dkim-snapshots:
@@ -22,21 +20,12 @@ jobs:
           while IFS=: read -r domain selector || [ -n "$domain" ]; do
             file="results/${selector}._domainkey.${domain}.txt"
             record=$(dig +short txt "${selector}._domainkey.${domain}")
-            echo "::group::DKIM Snapshot - ${selector}._domainkey.${domain}"
-            echo "Retrieved DKIM key:"
-            echo "$record"
-            echo "::endgroup::"
             echo "$record" > "$file"
           done < selectors.txt
           
-      - name: Push to repo and create release
+      - name: Create release
         run: |
           dtstr=$(date -u +'%Y-%m-%d-%H-%M-%S')
-          git config user.name "Snapshot Bot"
-          git config user.email "snapshot-bot@users.noreply.github.com"
-          git add results/
-          git commit -m "DKIM snapshots taken at $dtstr"
-          git push
           tar -czf results.tar.gz results/
           gh release create "snapshot-$dtstr" results.tar.gz \
             --title "DKIM Snapshots - $dtstr" \
